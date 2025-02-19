@@ -191,7 +191,8 @@ class BlobAnimation {
     // Setup scene, camera, renderer
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
-    this.camera.position.z = 10;
+    // this.camera.position.z = 10;
+    this.camera.position.set(-2, 0, 10);
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
@@ -239,7 +240,7 @@ class BlobAnimation {
 
     // Mesh it
     this.blob = new THREE.Mesh(geometry, this.blobMaterial);
-    this.blob.position.x = 0; // Move the blob a bit to the left
+    this.blob.position.x = 3; // Move the blob a bit to the left
     this.scene.add(this.blob);
   }
 
