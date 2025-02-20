@@ -1,4 +1,5 @@
 import gsap from "https://cdn.skypack.dev/gsap";
+import GUI from "https://cdn.skypack.dev/lil-gui";
 
 // ---------------------------------------------------------
 // 1) SHADER CODE (GLSL 1.0, same style as your working version)
@@ -169,15 +170,16 @@ class BlobAnimation {
       firstState: {
         frequency: 0.25,
         amplitude: 1.2,
-        lowColor: "#E2B5FF",
-        highColor: "#9E30F7",
+
+        lowColor: "#e5e544",
+        highColor: "#b8b100",
       },
       // The "calm" state
       secondState: {
         frequency: 0.28,
         amplitude: 0.35,
-        lowColor: "#E5E544",
-        highColor: "#00B98E",
+        lowColor: "#adbcff",
+        highColor: "#2247f0",
       },
     };
 
@@ -213,6 +215,80 @@ class BlobAnimation {
 
     // Start the render loop
     this.animate();
+
+    // this.debug();
+  }
+
+  debug() {
+    const gui = new GUI();
+
+    // Toggle state
+    const stateController = { currentState: "Chaotic" };
+
+    gui.add(stateController, "currentState", ["Chaotic", "Calm"]).onChange((value) => {
+      if (value === "Chaotic") {
+        this.blobMaterial.uniforms.uFrequency.value = this.initialState.firstState.frequency;
+        this.blobMaterial.uniforms.uAmplitude.value = this.initialState.firstState.amplitude;
+        this.blobMaterial.uniforms.uLowColor.value.set(this.initialState.firstState.lowColor);
+        this.blobMaterial.uniforms.uHighColor.value.set(this.initialState.firstState.highColor);
+      } else {
+        this.blobMaterial.uniforms.uFrequency.value = this.initialState.secondState.frequency;
+        this.blobMaterial.uniforms.uAmplitude.value = this.initialState.secondState.amplitude;
+        this.blobMaterial.uniforms.uLowColor.value.set(this.initialState.secondState.lowColor);
+        this.blobMaterial.uniforms.uHighColor.value.set(this.initialState.secondState.highColor);
+      }
+    });
+
+    // Folder for chaotic state
+    const chaoticFolder = gui.addFolder("Chaotic State");
+    chaoticFolder.add(this.initialState.firstState, "frequency", 0.1, 1).onChange((value) => {
+      if (stateController.currentState === "Chaotic") {
+        this.blobMaterial.uniforms.uFrequency.value = value;
+      }
+    });
+    chaoticFolder.add(this.initialState.firstState, "amplitude", 0.1, 2).onChange((value) => {
+      if (stateController.currentState === "Chaotic") {
+        this.blobMaterial.uniforms.uAmplitude.value = value;
+      }
+    });
+
+    // Folder for calm state
+    const calmFolder = gui.addFolder("Calm State");
+    calmFolder.add(this.initialState.secondState, "frequency", 0.1, 1).onChange((value) => {
+      if (stateController.currentState === "Calm") {
+        this.blobMaterial.uniforms.uFrequency.value = value;
+      }
+    });
+    calmFolder.add(this.initialState.secondState, "amplitude", 0.1, 2).onChange((value) => {
+      if (stateController.currentState === "Calm") {
+        this.blobMaterial.uniforms.uAmplitude.value = value;
+      }
+    });
+
+    // Folder for colors
+    const colorFolder = gui.addFolder("Colors");
+    colorFolder.addColor(this.initialState.firstState, "lowColor").onChange((value) => {
+      if (stateController.currentState === "Chaotic") {
+        this.blobMaterial.uniforms.uLowColor.value.set(value);
+      }
+    });
+    colorFolder.addColor(this.initialState.firstState, "highColor").onChange((value) => {
+      if (stateController.currentState === "Chaotic") {
+        this.blobMaterial.uniforms.uHighColor.value.set(value);
+      }
+    });
+    colorFolder.addColor(this.initialState.secondState, "lowColor").onChange((value) => {
+      if (stateController.currentState === "Calm") {
+        this.blobMaterial.uniforms.uLowColor.value.set(value);
+      }
+    });
+    colorFolder.addColor(this.initialState.secondState, "highColor").onChange((value) => {
+      if (stateController.currentState === "Calm") {
+        this.blobMaterial.uniforms.uHighColor.value.set(value);
+      }
+    });
+
+    // gui.open(); // Open GUI by default
   }
 
   createBlob() {
